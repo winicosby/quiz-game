@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <div id="score"></div>
+    <div class="question">
+      <h3 class="text">What is a man</h3>
+    </div>
+    <div class="options">
+      <div class="input-group"></div>
+      <div class="input-group"></div>
+      <div class="input-group"></div>
+      <div class="input-group"></div>
+    </div>
+    <div class="action">
+      <button onclick="nextQuestion()" class="btn" type="button">Next</button>
+    </div>
+    <script>
+      let currQues = 1;
+      let score = 0;
+      const questions = [
+        {
+          question: "What British scientist defined gravity?",
+          options: ["Bacon", "Brahe", "Copernicus", "Newton"],
+          answer: "Newton"
+        },
+        {
+          question: "Who is credited with inventing the scientific method?",
+          options: ["Bacon", "Brahe", "Copernicus", "Galileo"],
+          answer: "Bacon"
+        },
+        {
+          question: 'Who famously stated "I think therefore I am"?',
+          options: ["Descartes", "Galileo", "Kepler", "Newton"],
+          answer: "Descartes"
+        },
+        {
+          question: "Who came up with the three laws of planetary motion?",
+          options: ["bacon", "Brahe", "Copernicus", "Kepler"],
+          answer: "Kepler"
+        },
+        {
+          question:
+            "What famous Italian astronomer was convicted of heresy by the inquisition?",
+          options: ["Descartes", "Galileo", "Kepler", "Newton"],
+          answer: "Galileo"
+        }
+      ];
+
+      function nextQuestion() {
+        checkSelectedAnswer();
+        if (currQues < questions.length) {
+          clearAllInputGroupClass();
+          document.querySelector("body > div.question > h3").innerHTML =
+            questions[currQues].question;
+
+          const list = document.querySelectorAll(
+            "body > div.options > div.input-group"
+          );
+          list.forEach((el, index) => {
+            const value = questions[currQues].options[index];
+            el.innerHTML = `
+				 <input id="${value}" type="radio" name="option" value="${value}"  />
+				 <label for="${value}">${value}</label>
+				 `;
+          });
+
+          markAnswers();
+        } else {
+          document.querySelector(
+            "body > div.question > h3"
+          ).innerHTML = `Total Score: ${score}`;
+
+          const list = document.querySelectorAll(
+            "body > div.options > div.input-group"
+          );
+          list.forEach((el, index) => {
+            el.remove();
+          });
+
+          document.querySelector("button").remove();
+        }
+        currQues += 1;
+        console.log("B:", currQues);
+
+        return;
+      }
+
+      document.addEventListener("DOMContentLoaded", function(event) {
+        document.getElementById("score").innerHTML = `<p>Score: ${score}</p>`;
+
+        document.querySelector("body > div.question > h3").innerHTML =
+          questions[0].question;
+
+        const list = document.querySelectorAll(
+          "body > div.options > div.input-group"
+        );
+        list.forEach((el, index) => {
+          const value = questions[0].options[index];
+          el.innerHTML = `
+       <input id="${value}" type="radio" name="option" value="${value}"  />
+       <label for="${value}">${value}</label>
+       `;
+        });
+
+        markAnswers();
+      });
+
+      function markAnswers() {
+        const radios = document.querySelectorAll("input[type=radio]");
+        radios.forEach((el, index) => {
+          el.addEventListener("change", ev => {
+            clearAllInputGroupClass();
+            if (questions[currQues - 1].answer == ev.target.value) {
+              document
+                .querySelector(
+                  `body > div.options > div.input-group:nth-child(${index + 1})`
+                )
+                .classList.add("correct");
+            } else {
+              document
+                .querySelector(
+                  `body > div.options > div.input-group:nth-child(${index + 1})`
+                )
+                .classList.add("wrong");
+            }
+          });
+        });
+      }
+      function clearAllInputGroupClass() {
+        const list = document.querySelectorAll(
+          "body > div.options > div.input-group"
+        );
+        list.forEach((el, index) => {
+          el.classList.remove("correct");
+          el.classList.remove("wrong");
+        });
+      }
+
+      function checkSelectedAnswer() {
+        const radios = document.querySelectorAll("input[type=radio]");
+        radios.forEach((el, index) => {
+          if (el.checked && questions[currQues - 1].answer == el.value) {
+            score += 1;
+            document.getElementById(
+              "score"
+            ).innerHTML = `<p>Score: ${score}</p>`;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
